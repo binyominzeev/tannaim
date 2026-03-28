@@ -119,6 +119,23 @@ function escapeHtml(str) {
     .replace(/"/g, '&quot;');
 }
 
+/**
+ * Build a map from positions in the nikud-stripped string to positions in the
+ * original string (which may contain nikud / cantillation marks).
+ * map[i] = index of the i-th non-nikud character in `text`.
+ * map[strippedLength] = text.length  (sentinel for end-of-string slicing).
+ */
+function buildNikudMap(text) {
+  const map = [];
+  for (let i = 0; i < text.length; i++) {
+    if (!/[\u0591-\u05C7]/.test(text[i])) {
+      map.push(i);
+    }
+  }
+  map.push(text.length); // sentinel
+  return map;
+}
+
 function showToast(msg, isError = false) {
   const el = document.getElementById('toast');
   el.textContent = msg;
@@ -171,7 +188,14 @@ function buildTannaPatterns(tannaim) {
 }
 
 function detectTannaim(text, lang) {
-  const plain = lang === 'he' ? stripNikud(text) : text;
+  // For Hebrew: strip nikud before searching.
+  // For English: strip HTML tags before searching to avoid matching inside attributes.
+  let plain;
+  if (lang === 'he') {
+    plain = stripNikud(text);
+  } else {
+    plain = text.replace(/<[^>]+>/g, '');
+  }
   const patterns = state._patterns || [];
   // Use same range-overlap logic as highlighting to avoid false submatches
   const ranges = [];
@@ -194,15 +218,30 @@ function detectTannaim(text, lang) {
 
 /**
  * Highlight tanna names in text, returning HTML string.
- * We replace from longest match to shortest to avoid double-replacing.
+ * For Hebrew: uses a nikud-position map so that character positions from the
+ * stripped search string correctly index into the original nikud-bearing text.
+ * For English: the Sefaria API returns text that already contains HTML markup
+ * (e.g. <b>…</b>).  We pass those tags through unchanged so the browser
+ * renders them, and we insert tanna <span> elements around matched substrings
+ * in the plain-text portions.
  */
 function highlightTannaim(text, lang) {
-  if (!state.showHighlight) return escapeHtml(text);
+  // When highlighting is disabled, return the text safe for innerHTML.
+  // Hebrew has no HTML markup → escape it.
+  // English already contains trusted HTML from Sefaria → pass through.
+  if (!state.showHighlight) {
+    return lang === 'he' ? escapeHtml(text) : (text || '');
+  }
 
+  // For Hebrew: search in the nikud-stripped version; map positions back to
+  // the original so that we slice the right characters (including nikud).
+  // For English: search in the raw HTML string; positions are consistent and
+  // tanna names appear in text runs between tags, not inside tag attributes.
   const plain = lang === 'he' ? stripNikud(text) : text;
+  const nikudMap = lang === 'he' ? buildNikudMap(text) : null;
   const patterns = state._patterns || [];
 
-  // Build non-overlapping replacement ranges
+  // Build non-overlapping replacement ranges (positions in `plain`)
   const ranges = []; // { start, end, id, term }
   for (const p of patterns) {
     if (p.lang !== lang) continue;
@@ -221,18 +260,28 @@ function highlightTannaim(text, lang) {
   }
   ranges.sort((a, b) => a.start - b.start);
 
-  // Build output
+  // Build output, translating `plain` positions to `text` positions via nikudMap.
   let result = '';
-  let cursor = 0;
+  let cursor = 0; // cursor in `plain` positions
   for (const r of ranges) {
-    result += escapeHtml(text.slice(cursor, r.start));
+    const textCursor = nikudMap ? nikudMap[cursor]   : cursor;
+    const textStart  = nikudMap ? nikudMap[r.start]  : r.start;
+    const textEnd    = nikudMap ? nikudMap[r.end]    : r.end;
+
+    const before  = text.slice(textCursor, textStart);
+    const matched = text.slice(textStart, textEnd);
+
+    result += lang === 'he' ? escapeHtml(before)  : before;
+
     const colorIdx = state.tannaColorMap[r.id] || 0;
     const tanna = state.tannaim.find(t => t.id === r.id);
     const label = tanna ? (lang === 'he' ? tanna.name_he : tanna.name_en) : r.id;
-    result += `<span class="tanna-tag tanna-color-${colorIdx}" title="${escapeHtml(label)}" data-tanna-id="${r.id}">${escapeHtml(text.slice(r.start, r.end))}</span>`;
+    result += `<span class="tanna-tag tanna-color-${colorIdx}" title="${escapeHtml(label)}" data-tanna-id="${r.id}">${lang === 'he' ? escapeHtml(matched) : matched}</span>`;
     cursor = r.end;
   }
-  result += escapeHtml(text.slice(cursor));
+  const textCursorFinal = nikudMap ? nikudMap[cursor] : cursor;
+  const tail = text.slice(textCursorFinal);
+  result += lang === 'he' ? escapeHtml(tail) : tail;
   return result;
 }
 
@@ -574,7 +623,7 @@ function renderListView(args) {
         ${arg.description ? `<div class="arg-description">${escapeHtml(arg.description)}</div>` : ''}
         <div class="arg-texts">
           <div class="arg-text-he he-text">${escapeHtml(arg.text_he)}</div>
-          <div>${escapeHtml(arg.text_en)}</div>
+          <div>${arg.text_en || ''}</div>
         </div>
       </div>
     `;
@@ -595,7 +644,7 @@ function renderArgItem(arg) {
       ${arg.description ? `<div class="arg-description">${escapeHtml(arg.description)}</div>` : ''}
       <div class="arg-texts">
         <div class="arg-text-he he-text">${escapeHtml(arg.text_he)}</div>
-        <div>${escapeHtml(arg.text_en)}</div>
+        <div>${arg.text_en || ''}</div>
       </div>
     </div>
   `;
@@ -623,7 +672,7 @@ function openRecordModal(mishnaEl) {
 
   document.getElementById('modal-ref').textContent = ref.replace(/_/g, ' ').replace(/\./g, ' ');
   document.getElementById('modal-text-he').textContent = heText;
-  document.getElementById('modal-text-en').textContent = enText;
+  document.getElementById('modal-text-en').innerHTML = enText || '';
   document.getElementById('modal-description').value = '';
   document.getElementById('modal-label').value = '';
 
@@ -694,7 +743,7 @@ function openEditModal(argId) {
 
   document.getElementById('edit-modal-ref').textContent = arg.ref.replace(/_/g, ' ').replace(/\./g, ' ');
   document.getElementById('edit-modal-text-he').textContent = arg.text_he;
-  document.getElementById('edit-modal-text-en').textContent = arg.text_en;
+  document.getElementById('edit-modal-text-en').innerHTML = arg.text_en || '';
   document.getElementById('edit-modal-description').value = arg.description || '';
   document.getElementById('edit-modal-label').value = arg.label || '';
 

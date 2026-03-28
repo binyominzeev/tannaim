@@ -465,7 +465,35 @@ app.get('/api/sefaria/:ref(*)', async (req, res) => {
   const url = `https://www.sefaria.org/api/texts/${ref}?lang=bi&commentary=0&context=0`;
   try {
     const body = await httpsGet(url);
-    const data = JSON.parse(body);
+    let data = JSON.parse(body);
+
+    // The Sefaria API often returns only the first chapter when the ref is a
+    // bare masechet name (e.g. "Mishnah_Arakhin").  Detect this and fetch all
+    // remaining chapters in parallel so the app sees the full nested text.
+    // We only do this when the caller asked for the whole masechet (no dot in
+    // the ref), a single section was returned, and more chapters exist.
+    const isFullMasechetRef = !ref.includes('.');
+    if (
+      isFullMasechetRef &&
+      Array.isArray(data.sections) && data.sections.length === 1 &&
+      typeof data.length === 'number' && data.length > 1
+    ) {
+      const numChapters = data.length;
+      const chapterPromises = [];
+      for (let ch = 2; ch <= numChapters; ch++) {
+        const chUrl = `https://www.sefaria.org/api/texts/${ref}.${ch}?lang=bi&commentary=0&context=0`;
+        chapterPromises.push(
+          httpsGet(chUrl)
+            .then(b => JSON.parse(b))
+            .catch(() => ({ he: [], text: [] }))
+        );
+      }
+      const chapters = await Promise.all(chapterPromises);
+      const allHe = [data.he, ...chapters.map(c => c.he  || [])];
+      const allEn = [data.text, ...chapters.map(c => c.text || [])];
+      data = { ...data, he: allHe, text: allEn };
+    }
+
     res.json(data);
   } catch (e) {
     console.warn(`Sefaria proxy failed for ${ref}: ${e.message}. Using sample data if available.`);
