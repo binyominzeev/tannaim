@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tannaim – Mishnah Argument Explorer</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- ── Header ─────────────────────────────────────────────────────────── -->
+  <header class="app-header">
+    <div class="header-brand">
+      <span class="brand-he">תנאים</span>
+      <span class="brand-en">Tannaim Explorer</span>
+    </div>
+    <nav class="header-nav">
+      <button class="nav-btn active" data-view="explorer">📖 Explorer</button>
+      <button class="nav-btn" data-view="arguments">⚖️ Arguments</button>
+    </nav>
+  </header>
+
+  <!-- ── Main ───────────────────────────────────────────────────────────── -->
+  <main class="app-main">
+
+    <!-- ════ EXPLORER VIEW ════════════════════════════════════════════════ -->
+    <section id="view-explorer" class="view active">
+      <aside class="sidebar">
+        <div class="sidebar-section">
+          <h3>Select Masechet</h3>
+          <select id="seder-select">
+            <option value="">— Seder —</option>
+            <option value="Zeraim">Seder Zeraim</option>
+            <option value="Moed">Seder Moed</option>
+            <option value="Nashim">Seder Nashim</option>
+            <option value="Nezikin">Seder Nezikin</option>
+            <option value="Kodashim">Seder Kodashim</option>
+            <option value="Taharot">Seder Taharot</option>
+          </select>
+          <select id="masechet-select" disabled>
+            <option value="">— Masechet —</option>
+          </select>
+          <button id="btn-load" class="btn-primary" disabled>Load Masechet</button>
+        </div>
+
+        <div class="sidebar-section" id="filter-section" style="display:none">
+          <h3>Highlight Tannaim</h3>
+          <label class="toggle-label">
+            <input type="checkbox" id="toggle-highlight" checked />
+            Show highlights
+          </label>
+          <div id="tanna-filter-list" class="tanna-filter-list"></div>
+        </div>
+
+        <div class="sidebar-section" id="stats-section" style="display:none">
+          <h3>This Masechet</h3>
+          <div id="explorer-stats" class="stats-box"></div>
+        </div>
+      </aside>
+
+      <div class="content-area">
+        <div id="explorer-placeholder" class="placeholder">
+          <div class="placeholder-icon">📜</div>
+          <p>Select a masechet and click <strong>Load Masechet</strong> to begin.</p>
+        </div>
+        <div id="loading-spinner" class="spinner" style="display:none">
+          <div class="spinner-ring"></div>
+          <p>Loading from Sefaria…</p>
+        </div>
+        <div id="masechet-content" style="display:none">
+          <div class="masechet-header">
+            <h2 id="masechet-title-he" class="he-text"></h2>
+            <h2 id="masechet-title-en"></h2>
+          </div>
+          <div id="chapters-container"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════ ARGUMENTS VIEW ═══════════════════════════════════════════════ -->
+    <section id="view-arguments" class="view">
+      <aside class="sidebar">
+        <div class="sidebar-section">
+          <h3>Filter by Tanna</h3>
+          <select id="arg-tanna-filter">
+            <option value="">All Tannaim</option>
+          </select>
+        </div>
+        <div class="sidebar-section">
+          <h3>Filter by Masechet</h3>
+          <select id="arg-masechet-filter">
+            <option value="">All Masekhtot</option>
+          </select>
+        </div>
+        <div class="sidebar-section">
+          <h3>Statistics</h3>
+          <div id="args-stats" class="stats-box"></div>
+        </div>
+        <div class="sidebar-section">
+          <button class="btn-secondary full-width" id="btn-export">⬇ Export JSON</button>
+        </div>
+      </aside>
+
+      <div class="content-area">
+        <div class="args-toolbar">
+          <h2>Recorded Arguments</h2>
+          <div class="args-view-toggle">
+            <button class="view-mode-btn active" data-mode="pairs">By Pairs</button>
+            <button class="view-mode-btn" data-mode="list">All Arguments</button>
+          </div>
+        </div>
+        <div id="args-placeholder" class="placeholder" style="display:none">
+          <div class="placeholder-icon">⚖️</div>
+          <p>No arguments recorded yet. Use the Explorer to load a masechet and record arguments.</p>
+        </div>
+        <div id="pairs-container"></div>
+        <div id="list-container" style="display:none"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ════ RECORD ARGUMENT MODAL ═══════════════════════════════════════════ -->
+  <div id="modal-record" class="modal-overlay" style="display:none">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Record Argument</h3>
+        <button class="modal-close" id="btn-modal-close">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="mishna-preview">
+          <div class="mishna-preview-inner">
+            <div id="modal-ref" class="mishna-ref"></div>
+            <div class="mishna-texts">
+              <div id="modal-text-he" class="he-text mishna-text-preview"></div>
+              <div id="modal-text-en" class="mishna-text-preview"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Tannaim involved <span class="hint">(select at least 2)</span></label>
+          <div id="modal-tanna-checkboxes" class="tanna-checkboxes"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="modal-description">Description / Summary</label>
+          <textarea id="modal-description" rows="3"
+            placeholder="Briefly describe what the disagreement is about…"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="modal-label">Label / Category</label>
+          <input type="text" id="modal-label"
+            placeholder="e.g. purity, Shabbat, prayer, vows…" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="btn-modal-cancel">Cancel</button>
+        <button class="btn-primary" id="btn-modal-save">Save Argument</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ EDIT ARGUMENT MODAL ════════════════════════════════════════════ -->
+  <div id="modal-edit" class="modal-overlay" style="display:none">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Edit Argument</h3>
+        <button class="modal-close" id="btn-edit-close">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="mishna-preview">
+          <div class="mishna-preview-inner">
+            <div id="edit-modal-ref" class="mishna-ref"></div>
+            <div class="mishna-texts">
+              <div id="edit-modal-text-he" class="he-text mishna-text-preview"></div>
+              <div id="edit-modal-text-en" class="mishna-text-preview"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Tannaim involved <span class="hint">(select at least 2)</span></label>
+          <div id="edit-modal-tanna-checkboxes" class="tanna-checkboxes"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="edit-modal-description">Description / Summary</label>
+          <textarea id="edit-modal-description" rows="3"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="edit-modal-label">Label / Category</label>
+          <input type="text" id="edit-modal-label" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-danger" id="btn-edit-delete">Delete</button>
+        <button class="btn-secondary" id="btn-edit-cancel">Cancel</button>
+        <button class="btn-primary" id="btn-edit-save">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ TOAST NOTIFICATION ═════════════════════════════════════════════ -->
+  <div id="toast" class="toast" style="display:none"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

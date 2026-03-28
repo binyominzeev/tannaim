@@ -1,0 +1,342 @@
+{
+  "tannaim": [
+    {
+      "id": "beit-hillel",
+      "name_he": "בית הלל",
+      "name_en": "Beit Hillel",
+      "search_he": [
+        "בית הלל"
+      ],
+      "search_en": [
+        "Beit Hillel",
+        "Beth Hillel",
+        "House of Hillel"
+      ],
+      "generation": 1,
+      "notes": "School of Hillel"
+    },
+    {
+      "id": "beit-shammai",
+      "name_he": "בית שמאי",
+      "name_en": "Beit Shammai",
+      "search_he": [
+        "בית שמאי"
+      ],
+      "search_en": [
+        "Beit Shammai",
+        "Beth Shammai",
+        "House of Shammai"
+      ],
+      "generation": 1,
+      "notes": "School of Shammai"
+    },
+    {
+      "id": "hillel",
+      "name_he": "הלל",
+      "name_en": "Hillel",
+      "search_he": [
+        "הלל"
+      ],
+      "search_en": [
+        "Hillel"
+      ],
+      "generation": 1,
+      "notes": "Hillel the Elder"
+    },
+    {
+      "id": "shammai",
+      "name_he": "שמאי",
+      "name_en": "Shammai",
+      "search_he": [
+        "שמאי"
+      ],
+      "search_en": [
+        "Shammai"
+      ],
+      "generation": 1,
+      "notes": "Shammai the Elder"
+    },
+    {
+      "id": "chachamim",
+      "name_he": "חכמים",
+      "name_en": "Chachamim",
+      "search_he": [
+        "חכמים",
+        "וחכמים"
+      ],
+      "search_en": [
+        "the Sages",
+        "the sages",
+        "the Rabbis",
+        "Sages"
+      ],
+      "generation": 0,
+      "notes": "The Sages (collective)"
+    },
+    {
+      "id": "rabban-gamliel",
+      "name_he": "רבן גמליאל",
+      "name_en": "Rabban Gamliel",
+      "search_he": [
+        "רבן גמליאל"
+      ],
+      "search_en": [
+        "Rabban Gamliel",
+        "Rabban Gamliel"
+      ],
+      "generation": 2,
+      "notes": ""
+    },
+    {
+      "id": "ryb-zakkai",
+      "name_he": "רבן יוחנן בן זכאי",
+      "name_en": "Rabban Yochanan ben Zakkai",
+      "search_he": [
+        "רבן יוחנן בן זכאי"
+      ],
+      "search_en": [
+        "Rabban Yochanan ben Zakkai",
+        "Rabban Johanan ben Zakkai"
+      ],
+      "generation": 2,
+      "notes": ""
+    },
+    {
+      "id": "r-eliezer",
+      "name_he": "רבי אליעזר",
+      "name_en": "Rabbi Eliezer",
+      "search_he": [
+        "רבי אליעזר",
+        "ר' אליעזר"
+      ],
+      "search_en": [
+        "Rabbi Eliezer",
+        "R. Eliezer"
+      ],
+      "generation": 3,
+      "notes": "Rabbi Eliezer ben Hyrcanus"
+    },
+    {
+      "id": "r-yehoshua",
+      "name_he": "רבי יהושע",
+      "name_en": "Rabbi Yehoshua",
+      "search_he": [
+        "רבי יהושע",
+        "ר' יהושע"
+      ],
+      "search_en": [
+        "Rabbi Yehoshua",
+        "R. Yehoshua",
+        "Rabbi Joshua"
+      ],
+      "generation": 3,
+      "notes": "Rabbi Yehoshua ben Chanania"
+    },
+    {
+      "id": "r-akiva",
+      "name_he": "רבי עקיבא",
+      "name_en": "Rabbi Akiva",
+      "search_he": [
+        "רבי עקיבא",
+        "ר' עקיבא",
+        "רבי עקיבה"
+      ],
+      "search_en": [
+        "Rabbi Akiva",
+        "R. Akiva",
+        "Rabbi Aqiva",
+        "Rabbi Akiba"
+      ],
+      "generation": 3,
+      "notes": ""
+    },
+    {
+      "id": "r-tarfon",
+      "name_he": "רבי טרפון",
+      "name_en": "Rabbi Tarfon",
+      "search_he": [
+        "רבי טרפון",
+        "ר' טרפון"
+      ],
+      "search_en": [
+        "Rabbi Tarfon",
+        "R. Tarfon"
+      ],
+      "generation": 3,
+      "notes": ""
+    },
+    {
+      "id": "r-yishmael",
+      "name_he": "רבי ישמעאל",
+      "name_en": "Rabbi Yishmael",
+      "search_he": [
+        "רבי ישמעאל",
+        "ר' ישמעאל"
+      ],
+      "search_en": [
+        "Rabbi Yishmael",
+        "R. Yishmael",
+        "Rabbi Ishmael"
+      ],
+      "generation": 3,
+      "notes": ""
+    },
+    {
+      "id": "r-elazar-azaryah",
+      "name_he": "רבי אלעזר בן עזריה",
+      "name_en": "Rabbi Elazar ben Azaryah",
+      "search_he": [
+        "רבי אלעזר בן עזריה"
+      ],
+      "search_en": [
+        "Rabbi Elazar ben Azaryah",
+        "Rabbi Eleazar ben Azariah"
+      ],
+      "generation": 3,
+      "notes": ""
+    },
+    {
+      "id": "r-meir",
+      "name_he": "רבי מאיר",
+      "name_en": "Rabbi Meir",
+      "search_he": [
+        "רבי מאיר",
+        "ר' מאיר"
+      ],
+      "search_en": [
+        "Rabbi Meir",
+        "R. Meir"
+      ],
+      "generation": 4,
+      "notes": ""
+    },
+    {
+      "id": "r-yehuda",
+      "name_he": "רבי יהודה",
+      "name_en": "Rabbi Yehuda",
+      "search_he": [
+        "רבי יהודה",
+        "ר' יהודה"
+      ],
+      "search_en": [
+        "Rabbi Yehuda",
+        "R. Yehuda",
+        "Rabbi Judah"
+      ],
+      "generation": 4,
+      "notes": "Rabbi Yehuda bar Ilai"
+    },
+    {
+      "id": "r-yose",
+      "name_he": "רבי יוסי",
+      "name_en": "Rabbi Yose",
+      "search_he": [
+        "רבי יוסי",
+        "ר' יוסי",
+        "רבי יוסה"
+      ],
+      "search_en": [
+        "Rabbi Yose",
+        "R. Yose",
+        "Rabbi Yosi"
+      ],
+      "generation": 4,
+      "notes": "Rabbi Yose ben Chalafta"
+    },
+    {
+      "id": "r-shimon",
+      "name_he": "רבי שמעון",
+      "name_en": "Rabbi Shimon",
+      "search_he": [
+        "רבי שמעון",
+        "ר' שמעון"
+      ],
+      "search_en": [
+        "Rabbi Shimon",
+        "R. Shimon",
+        "Rabbi Simeon"
+      ],
+      "generation": 4,
+      "notes": "Rabbi Shimon bar Yochai"
+    },
+    {
+      "id": "r-natan",
+      "name_he": "רבי נתן",
+      "name_en": "Rabbi Natan",
+      "search_he": [
+        "רבי נתן",
+        "ר' נתן"
+      ],
+      "search_en": [
+        "Rabbi Natan",
+        "R. Natan",
+        "Rabbi Nathan"
+      ],
+      "generation": 4,
+      "notes": ""
+    },
+    {
+      "id": "r-elazar",
+      "name_he": "רבי אלעזר",
+      "name_en": "Rabbi Elazar",
+      "search_he": [
+        "רבי אלעזר",
+        "ר' אלעזר"
+      ],
+      "search_en": [
+        "Rabbi Elazar",
+        "R. Elazar",
+        "Rabbi Eleazar"
+      ],
+      "generation": 4,
+      "notes": "Rabbi Elazar ben Shamua"
+    },
+    {
+      "id": "r-yehuda-hanasi",
+      "name_he": "רבי יהודה הנשיא",
+      "name_en": "Rabbi Yehuda HaNasi",
+      "search_he": [
+        "רבי יהודה הנשיא"
+      ],
+      "search_en": [
+        "Rabbi Yehuda HaNasi",
+        "Rabbi Judah the Prince",
+        "Rabbi Judah HaNasi"
+      ],
+      "generation": 5,
+      "notes": "Compiler of the Mishnah"
+    },
+    {
+      "id": "r-shimon-ben-gamliel",
+      "name_he": "רבן שמעון בן גמליאל",
+      "name_en": "Rabban Shimon ben Gamliel",
+      "search_he": [
+        "רבן שמעון בן גמליאל"
+      ],
+      "search_en": [
+        "Rabban Shimon ben Gamliel",
+        "Rabban Simeon ben Gamaliel"
+      ],
+      "generation": 4,
+      "notes": ""
+    },
+    {
+      "id": "r-chiya",
+      "name_he": "רבי חייא",
+      "name_en": "Rabbi Chiya",
+      "search_he": [
+        "רבי חייא",
+        "ר' חייא"
+      ],
+      "search_en": [
+        "Rabbi Chiya",
+        "R. Chiya",
+        "Rabbi Hiyya"
+      ],
+      "generation": 5,
+      "notes": ""
+    }
+  ],
+  "arguments": [],
+  "nextArgumentId": 1
+}
