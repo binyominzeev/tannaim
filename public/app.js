@@ -89,7 +89,9 @@ const state = {
   tannaim: [],          // loaded from backend
   tannaColorMap: {},    // tannaId → color index
   currentMasechet: null,// { en, he, sefaria }
-  loadedText: null,     // { he:[[]], en:[[]] }
+  loadedText: null,     // { he:[[]], en:[[]] } — single chapter
+  currentChapter: 1,    // 1-indexed chapter currently displayed
+  totalChapters: 1,     // total chapters in the loaded masechet
   recordedArgs: [],     // arguments for current masechet
   allArgs: [],          // all recorded arguments
   showHighlight: true,
@@ -189,12 +191,15 @@ function buildTannaPatterns(tannaim) {
 
 function detectTannaim(text, lang) {
   // For Hebrew: strip nikud before searching.
-  // For English: strip HTML tags before searching to avoid matching inside attributes.
+  // For English: extract plain text from the HTML markup Sefaria includes,
+  // so we don't accidentally match tanna names inside tag attributes.
+  // Use DOMParser (a proper HTML parser) rather than a regex heuristic.
   let plain;
   if (lang === 'he') {
     plain = stripNikud(text);
   } else {
-    plain = text.replace(/<[^>]+>/g, '');
+    const doc = new DOMParser().parseFromString(text, 'text/html');
+    plain = doc.body.textContent || '';
   }
   const patterns = state._patterns || [];
   // Use same range-overlap logic as highlighting to avoid false submatches
@@ -288,9 +293,11 @@ function highlightTannaim(text, lang) {
 // ══════════════════════════════════════════════════════════════════
 //  Sefaria API
 // ══════════════════════════════════════════════════════════════════
-async function fetchMasechet(sefariaRef) {
-  // Use our backend proxy so the browser doesn't need direct Sefaria access
-  const url = `/api/sefaria/${encodeURIComponent(sefariaRef)}`;
+async function fetchMasechet(sefariaRef, chapter) {
+  // Always request a specific chapter so Sefaria returns a single flat array
+  // of mishna strings rather than a nested structure.
+  const ref = chapter ? `${sefariaRef}.${chapter}` : sefariaRef;
+  const url = `/api/sefaria/${encodeURIComponent(ref)}`;
   const r = await fetch(url);
   if (!r.ok) {
     const err = await r.json().catch(() => ({ error: r.statusText }));
@@ -302,9 +309,9 @@ async function fetchMasechet(sefariaRef) {
   function normalise(arr) {
     if (!Array.isArray(arr)) return [];
     if (arr.length === 0) return [];
-    // If first element is a string → single chapter
+    // If first element is a string - single chapter returned as flat array
     if (typeof arr[0] === 'string') return [arr];
-    // If first element is an array → already nested
+    // If first element is an array - already nested
     if (Array.isArray(arr[0])) return arr;
     return [arr];
   }
@@ -313,7 +320,9 @@ async function fetchMasechet(sefariaRef) {
     he: normalise(data.he),
     en: normalise(data.text || data.en || []),
     heTitle: data.heTitle || '',
-    title: data.title || sefariaRef
+    title: data.title || sefariaRef,
+    // Sefaria reports the total chapter count in the top-level `length` field
+    totalChapters: (typeof data.length === 'number' && data.length > 0) ? data.length : 1
   };
 }
 
@@ -321,12 +330,15 @@ async function fetchMasechet(sefariaRef) {
 //  Explorer rendering
 // ══════════════════════════════════════════════════════════════════
 function renderExplorer() {
-  const { loadedText, currentMasechet, recordedArgs } = state;
+  const { loadedText, currentMasechet, recordedArgs, currentChapter } = state;
   if (!loadedText || !currentMasechet) return;
 
   // Update masechet title
   document.getElementById('masechet-title-he').textContent = currentMasechet.he;
   document.getElementById('masechet-title-en').textContent = currentMasechet.en;
+
+  // Update chapter navigation bar
+  renderChapterNav();
 
   // Build a set of recorded refs for quick lookup
   const recordedRefs = new Set(recordedArgs.map(a => a.ref));
@@ -335,6 +347,7 @@ function renderExplorer() {
   container.innerHTML = '';
 
   const { he, en } = loadedText;
+  // loadedText contains only the current chapter (one element in outer array)
   const numChapters = Math.max(he.length, en.length);
 
   for (let c = 0; c < numChapters; c++) {
@@ -342,15 +355,18 @@ function renderExplorer() {
     const enChap = en[c] || [];
     const numMishnayot = Math.max(heChap.length, enChap.length);
 
+    // Use the actual chapter number from state, not the loop index
+    const chNum = currentChapter + c;
+
     const chapterDiv = document.createElement('div');
     chapterDiv.className = 'chapter-block';
-    chapterDiv.innerHTML = `<div class="chapter-heading">Chapter ${c + 1} — פרק ${toHebrewNumeral(c + 1)}</div>`;
+    chapterDiv.innerHTML = `<div class="chapter-heading">Chapter ${chNum} — פרק ${toHebrewNumeral(chNum)}</div>`;
 
     for (let m = 0; m < numMishnayot; m++) {
       const heText = heChap[m] || '';
       const enText = enChap[m] || '';
-      const ref = `${currentMasechet.sefaria}.${c + 1}.${m + 1}`;
-      const refLabel = `${currentMasechet.en} ${c + 1}:${m + 1}`;
+      const ref = `${currentMasechet.sefaria}.${chNum}.${m + 1}`;
+      const refLabel = `${currentMasechet.en} ${chNum}:${m + 1}`;
 
       const detectedIds = detectMishnaArguments(heText, enText);
       const isRecorded = recordedRefs.has(ref);
@@ -358,7 +374,7 @@ function renderExplorer() {
       const mishnaDiv = document.createElement('div');
       mishnaDiv.className = 'mishna-block';
       mishnaDiv.dataset.ref = ref;
-      mishnaDiv.dataset.chapter = c + 1;
+      mishnaDiv.dataset.chapter = chNum;
       mishnaDiv.dataset.mishna = m + 1;
 
       let badgeHtml = '';
@@ -415,8 +431,28 @@ function detectMishnaArguments(heText, enText) {
   return [...merged];
 }
 
+function renderChapterNav() {
+  const { currentChapter, totalChapters } = state;
+  document.getElementById('chapter-nav-label').textContent =
+    `Chapter ${currentChapter} of ${totalChapters}`;
+  document.getElementById('btn-prev-chapter').disabled = currentChapter <= 1;
+  document.getElementById('btn-next-chapter').disabled = currentChapter >= totalChapters;
+  document.getElementById('chapter-select').value = String(currentChapter);
+}
+
+function buildChapterSelect() {
+  const sel = document.getElementById('chapter-select');
+  sel.innerHTML = '';
+  for (let i = 1; i <= state.totalChapters; i++) {
+    const o = document.createElement('option');
+    o.value = String(i);
+    o.textContent = `${i} — ${toHebrewNumeral(i)}`;
+    sel.appendChild(o);
+  }
+}
+
 function renderExplorerStats() {
-  const { loadedText, recordedArgs, currentMasechet } = state;
+  const { loadedText, recordedArgs, currentMasechet, currentChapter } = state;
   if (!loadedText) return;
 
   let total = 0;
@@ -425,8 +461,8 @@ function renderExplorerStats() {
   const statsEl = document.getElementById('explorer-stats');
   const argsHere = recordedArgs.filter(a => a.masechet_en === currentMasechet.en).length;
   statsEl.innerHTML = `
+    <div class="stat-row"><span>Chapter</span><span class="stat-val">${currentChapter} / ${state.totalChapters}</span></div>
     <div class="stat-row"><span>Mishnayot</span><span class="stat-val">${total}</span></div>
-    <div class="stat-row"><span>Chapters</span><span class="stat-val">${loadedText.he.length}</span></div>
     <div class="stat-row"><span>Recorded arguments</span><span class="stat-val">${argsHere}</span></div>
   `;
 }
@@ -862,12 +898,12 @@ async function onLoadMasechet() {
   if (!sefariaRef) return;
 
   const enName = selectedOpt.dataset.en;
-  const heName = selectedOpt.dataset.he;
 
   // Find masechet entry
   const masechet = MASEKHTOT[seder].find(m => m.sefaria === sefariaRef);
   state.currentMasechet = masechet;
   state.activeFilters.clear();
+  state.currentChapter = 1;
 
   // Show spinner
   document.getElementById('explorer-placeholder').style.display = 'none';
@@ -875,8 +911,9 @@ async function onLoadMasechet() {
   document.getElementById('masechet-content').style.display = 'none';
 
   try {
-    const data = await fetchMasechet(sefariaRef);
+    const data = await fetchMasechet(sefariaRef, 1);
     state.loadedText = { he: data.he, en: data.en };
+    state.totalChapters = data.totalChapters;
 
     // Load recorded args for this masechet
     state.recordedArgs = await apiGet(`/api/arguments?masechet=${encodeURIComponent(enName)}`);
@@ -884,12 +921,40 @@ async function onLoadMasechet() {
     document.getElementById('loading-spinner').style.display = 'none';
     document.getElementById('masechet-content').style.display = '';
 
+    // Build chapter select options now that we know totalChapters
+    buildChapterSelect();
     renderTannaFilterList();
     renderExplorer();
   } catch (e) {
     document.getElementById('loading-spinner').style.display = 'none';
     document.getElementById('explorer-placeholder').style.display = '';
     showToast('Failed to load masechet: ' + e.message, true);
+    console.error(e);
+  }
+}
+
+async function loadChapter(chapterNum) {
+  if (!state.currentMasechet) return;
+  if (chapterNum < 1 || chapterNum > state.totalChapters) return;
+
+  // Scroll back to top of content area
+  document.querySelector('.content-area').scrollTop = 0;
+
+  document.getElementById('loading-spinner').style.display = 'flex';
+  document.getElementById('masechet-content').style.display = 'none';
+
+  try {
+    const data = await fetchMasechet(state.currentMasechet.sefaria, chapterNum);
+    state.loadedText = { he: data.he, en: data.en };
+    state.currentChapter = chapterNum;
+
+    document.getElementById('loading-spinner').style.display = 'none';
+    document.getElementById('masechet-content').style.display = '';
+    renderExplorer();
+  } catch (e) {
+    document.getElementById('loading-spinner').style.display = 'none';
+    document.getElementById('masechet-content').style.display = '';
+    showToast('Failed to load chapter: ' + e.message, true);
     console.error(e);
   }
 }
@@ -960,6 +1025,18 @@ async function init() {
   document.getElementById('seder-select').addEventListener('change', onSederChange);
   document.getElementById('masechet-select').addEventListener('change', onMasechetChange);
   document.getElementById('btn-load').addEventListener('click', onLoadMasechet);
+
+  // Chapter navigation
+  document.getElementById('btn-prev-chapter').addEventListener('click', () => {
+    loadChapter(state.currentChapter - 1);
+  });
+  document.getElementById('btn-next-chapter').addEventListener('click', () => {
+    loadChapter(state.currentChapter + 1);
+  });
+  document.getElementById('chapter-select').addEventListener('change', e => {
+    const ch = Number(e.target.value);
+    if (ch && ch !== state.currentChapter) loadChapter(ch);
+  });
 
   // Highlight toggle
   document.getElementById('toggle-highlight').addEventListener('change', e => {
