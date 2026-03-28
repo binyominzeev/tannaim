@@ -431,25 +431,25 @@ function renderArgumentsView() {
 
   // Populate masechet filter options
   const masekhtot = [...new Set(allArgs.map(a => a.masechet_en))].sort();
-  const mf = document.getElementById('arg-masechet-filter');
-  const currentMVal = mf.value;
-  mf.innerHTML = '<option value="">All Masekhtot</option>';
+  const masechetFilterEl = document.getElementById('arg-masechet-filter');
+  const currentMVal = masechetFilterEl.value;
+  masechetFilterEl.innerHTML = '<option value="">All Masekhtot</option>';
   masekhtot.forEach(m => {
     const o = document.createElement('option');
     o.value = m; o.textContent = m;
     if (m === currentMVal) o.selected = true;
-    mf.appendChild(o);
+    masechetFilterEl.appendChild(o);
   });
 
   // Populate tanna filter options
-  const tf = document.getElementById('arg-tanna-filter');
-  const currentTVal = tf.value;
-  tf.innerHTML = '<option value="">All Tannaim</option>';
+  const tannaFilterEl = document.getElementById('arg-tanna-filter');
+  const currentTVal = tannaFilterEl.value;
+  tannaFilterEl.innerHTML = '<option value="">All Tannaim</option>';
   for (const t of tannaim) {
     const o = document.createElement('option');
     o.value = t.id; o.textContent = t.name_en;
     if (t.id === currentTVal) o.selected = true;
-    tf.appendChild(o);
+    tannaFilterEl.appendChild(o);
   }
 
   // Stats
