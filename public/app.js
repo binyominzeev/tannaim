@@ -89,7 +89,9 @@ const state = {
   tannaim: [],          // loaded from backend
   tannaColorMap: {},    // tannaId → color index
   currentMasechet: null,// { en, he, sefaria }
-  loadedText: null,     // { he:[[]], en:[[]] }
+  loadedText: null,     // { he:[[]], en:[[]] } — single chapter
+  currentChapter: 1,    // 1-indexed chapter currently displayed
+  totalChapters: 1,     // total chapters in the loaded masechet
   recordedArgs: [],     // arguments for current masechet
   allArgs: [],          // all recorded arguments
   showHighlight: true,
@@ -117,6 +119,23 @@ function escapeHtml(str) {
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
+}
+
+/**
+ * Build a map from positions in the nikud-stripped string to positions in the
+ * original string (which may contain nikud / cantillation marks).
+ * map[i] = index of the i-th non-nikud character in `text`.
+ * map[strippedLength] = text.length  (sentinel for end-of-string slicing).
+ */
+function buildNikudMap(text) {
+  const map = [];
+  for (let i = 0; i < text.length; i++) {
+    if (!/[\u0591-\u05C7]/.test(text[i])) {
+      map.push(i);
+    }
+  }
+  map.push(text.length); // sentinel
+  return map;
 }
 
 function showToast(msg, isError = false) {
@@ -171,7 +190,17 @@ function buildTannaPatterns(tannaim) {
 }
 
 function detectTannaim(text, lang) {
-  const plain = lang === 'he' ? stripNikud(text) : text;
+  // For Hebrew: strip nikud before searching.
+  // For English: extract plain text from the HTML markup Sefaria includes,
+  // so we don't accidentally match tanna names inside tag attributes.
+  // Use DOMParser (a proper HTML parser) rather than a regex heuristic.
+  let plain;
+  if (lang === 'he') {
+    plain = stripNikud(text);
+  } else {
+    const doc = new DOMParser().parseFromString(text, 'text/html');
+    plain = doc.body.textContent || '';
+  }
   const patterns = state._patterns || [];
   // Use same range-overlap logic as highlighting to avoid false submatches
   const ranges = [];
@@ -194,15 +223,30 @@ function detectTannaim(text, lang) {
 
 /**
  * Highlight tanna names in text, returning HTML string.
- * We replace from longest match to shortest to avoid double-replacing.
+ * For Hebrew: uses a nikud-position map so that character positions from the
+ * stripped search string correctly index into the original nikud-bearing text.
+ * For English: the Sefaria API returns text that already contains HTML markup
+ * (e.g. <b>…</b>).  We pass those tags through unchanged so the browser
+ * renders them, and we insert tanna <span> elements around matched substrings
+ * in the plain-text portions.
  */
 function highlightTannaim(text, lang) {
-  if (!state.showHighlight) return escapeHtml(text);
+  // When highlighting is disabled, return the text safe for innerHTML.
+  // Hebrew has no HTML markup → escape it.
+  // English already contains trusted HTML from Sefaria → pass through.
+  if (!state.showHighlight) {
+    return lang === 'he' ? escapeHtml(text) : (text || '');
+  }
 
+  // For Hebrew: search in the nikud-stripped version; map positions back to
+  // the original so that we slice the right characters (including nikud).
+  // For English: search in the raw HTML string; positions are consistent and
+  // tanna names appear in text runs between tags, not inside tag attributes.
   const plain = lang === 'he' ? stripNikud(text) : text;
+  const nikudMap = lang === 'he' ? buildNikudMap(text) : null;
   const patterns = state._patterns || [];
 
-  // Build non-overlapping replacement ranges
+  // Build non-overlapping replacement ranges (positions in `plain`)
   const ranges = []; // { start, end, id, term }
   for (const p of patterns) {
     if (p.lang !== lang) continue;
@@ -221,27 +265,39 @@ function highlightTannaim(text, lang) {
   }
   ranges.sort((a, b) => a.start - b.start);
 
-  // Build output
+  // Build output, translating `plain` positions to `text` positions via nikudMap.
   let result = '';
-  let cursor = 0;
+  let cursor = 0; // cursor in `plain` positions
   for (const r of ranges) {
-    result += escapeHtml(text.slice(cursor, r.start));
+    const textCursor = nikudMap ? nikudMap[cursor]   : cursor;
+    const textStart  = nikudMap ? nikudMap[r.start]  : r.start;
+    const textEnd    = nikudMap ? nikudMap[r.end]    : r.end;
+
+    const before  = text.slice(textCursor, textStart);
+    const matched = text.slice(textStart, textEnd);
+
+    result += lang === 'he' ? escapeHtml(before)  : before;
+
     const colorIdx = state.tannaColorMap[r.id] || 0;
     const tanna = state.tannaim.find(t => t.id === r.id);
     const label = tanna ? (lang === 'he' ? tanna.name_he : tanna.name_en) : r.id;
-    result += `<span class="tanna-tag tanna-color-${colorIdx}" title="${escapeHtml(label)}" data-tanna-id="${r.id}">${escapeHtml(text.slice(r.start, r.end))}</span>`;
+    result += `<span class="tanna-tag tanna-color-${colorIdx}" title="${escapeHtml(label)}" data-tanna-id="${r.id}">${lang === 'he' ? escapeHtml(matched) : matched}</span>`;
     cursor = r.end;
   }
-  result += escapeHtml(text.slice(cursor));
+  const textCursorFinal = nikudMap ? nikudMap[cursor] : cursor;
+  const tail = text.slice(textCursorFinal);
+  result += lang === 'he' ? escapeHtml(tail) : tail;
   return result;
 }
 
 // ══════════════════════════════════════════════════════════════════
 //  Sefaria API
 // ══════════════════════════════════════════════════════════════════
-async function fetchMasechet(sefariaRef) {
-  // Use our backend proxy so the browser doesn't need direct Sefaria access
-  const url = `/api/sefaria/${encodeURIComponent(sefariaRef)}`;
+async function fetchMasechet(sefariaRef, chapter) {
+  // Always request a specific chapter so Sefaria returns a single flat array
+  // of mishna strings rather than a nested structure.
+  const ref = chapter ? `${sefariaRef}.${chapter}` : sefariaRef;
+  const url = `/api/sefaria/${encodeURIComponent(ref)}`;
   const r = await fetch(url);
   if (!r.ok) {
     const err = await r.json().catch(() => ({ error: r.statusText }));
@@ -253,9 +309,9 @@ async function fetchMasechet(sefariaRef) {
   function normalise(arr) {
     if (!Array.isArray(arr)) return [];
     if (arr.length === 0) return [];
-    // If first element is a string → single chapter
+    // If first element is a string - single chapter returned as flat array
     if (typeof arr[0] === 'string') return [arr];
-    // If first element is an array → already nested
+    // If first element is an array - already nested
     if (Array.isArray(arr[0])) return arr;
     return [arr];
   }
@@ -264,7 +320,9 @@ async function fetchMasechet(sefariaRef) {
     he: normalise(data.he),
     en: normalise(data.text || data.en || []),
     heTitle: data.heTitle || '',
-    title: data.title || sefariaRef
+    title: data.title || sefariaRef,
+    // Sefaria reports the total chapter count in the top-level `length` field
+    totalChapters: (typeof data.length === 'number' && data.length > 0) ? data.length : 1
   };
 }
 
@@ -272,12 +330,15 @@ async function fetchMasechet(sefariaRef) {
 //  Explorer rendering
 // ══════════════════════════════════════════════════════════════════
 function renderExplorer() {
-  const { loadedText, currentMasechet, recordedArgs } = state;
+  const { loadedText, currentMasechet, recordedArgs, currentChapter } = state;
   if (!loadedText || !currentMasechet) return;
 
   // Update masechet title
   document.getElementById('masechet-title-he').textContent = currentMasechet.he;
   document.getElementById('masechet-title-en').textContent = currentMasechet.en;
+
+  // Update chapter navigation bar
+  renderChapterNav();
 
   // Build a set of recorded refs for quick lookup
   const recordedRefs = new Set(recordedArgs.map(a => a.ref));
@@ -286,6 +347,7 @@ function renderExplorer() {
   container.innerHTML = '';
 
   const { he, en } = loadedText;
+  // loadedText contains only the current chapter (one element in outer array)
   const numChapters = Math.max(he.length, en.length);
 
   for (let c = 0; c < numChapters; c++) {
@@ -293,15 +355,18 @@ function renderExplorer() {
     const enChap = en[c] || [];
     const numMishnayot = Math.max(heChap.length, enChap.length);
 
+    // Use the actual chapter number from state, not the loop index
+    const chNum = currentChapter + c;
+
     const chapterDiv = document.createElement('div');
     chapterDiv.className = 'chapter-block';
-    chapterDiv.innerHTML = `<div class="chapter-heading">Chapter ${c + 1} — פרק ${toHebrewNumeral(c + 1)}</div>`;
+    chapterDiv.innerHTML = `<div class="chapter-heading">Chapter ${chNum} — פרק ${toHebrewNumeral(chNum)}</div>`;
 
     for (let m = 0; m < numMishnayot; m++) {
       const heText = heChap[m] || '';
       const enText = enChap[m] || '';
-      const ref = `${currentMasechet.sefaria}.${c + 1}.${m + 1}`;
-      const refLabel = `${currentMasechet.en} ${c + 1}:${m + 1}`;
+      const ref = `${currentMasechet.sefaria}.${chNum}.${m + 1}`;
+      const refLabel = `${currentMasechet.en} ${chNum}:${m + 1}`;
 
       const detectedIds = detectMishnaArguments(heText, enText);
       const isRecorded = recordedRefs.has(ref);
@@ -309,7 +374,7 @@ function renderExplorer() {
       const mishnaDiv = document.createElement('div');
       mishnaDiv.className = 'mishna-block';
       mishnaDiv.dataset.ref = ref;
-      mishnaDiv.dataset.chapter = c + 1;
+      mishnaDiv.dataset.chapter = chNum;
       mishnaDiv.dataset.mishna = m + 1;
 
       let badgeHtml = '';
@@ -366,8 +431,28 @@ function detectMishnaArguments(heText, enText) {
   return [...merged];
 }
 
+function renderChapterNav() {
+  const { currentChapter, totalChapters } = state;
+  document.getElementById('chapter-nav-label').textContent =
+    `Chapter ${currentChapter} of ${totalChapters}`;
+  document.getElementById('btn-prev-chapter').disabled = currentChapter <= 1;
+  document.getElementById('btn-next-chapter').disabled = currentChapter >= totalChapters;
+  document.getElementById('chapter-select').value = String(currentChapter);
+}
+
+function buildChapterSelect() {
+  const sel = document.getElementById('chapter-select');
+  sel.innerHTML = '';
+  for (let i = 1; i <= state.totalChapters; i++) {
+    const o = document.createElement('option');
+    o.value = String(i);
+    o.textContent = `${i} — ${toHebrewNumeral(i)}`;
+    sel.appendChild(o);
+  }
+}
+
 function renderExplorerStats() {
-  const { loadedText, recordedArgs, currentMasechet } = state;
+  const { loadedText, recordedArgs, currentMasechet, currentChapter } = state;
   if (!loadedText) return;
 
   let total = 0;
@@ -376,8 +461,8 @@ function renderExplorerStats() {
   const statsEl = document.getElementById('explorer-stats');
   const argsHere = recordedArgs.filter(a => a.masechet_en === currentMasechet.en).length;
   statsEl.innerHTML = `
+    <div class="stat-row"><span>Chapter</span><span class="stat-val">${currentChapter} / ${state.totalChapters}</span></div>
     <div class="stat-row"><span>Mishnayot</span><span class="stat-val">${total}</span></div>
-    <div class="stat-row"><span>Chapters</span><span class="stat-val">${loadedText.he.length}</span></div>
     <div class="stat-row"><span>Recorded arguments</span><span class="stat-val">${argsHere}</span></div>
   `;
 }
@@ -574,7 +659,7 @@ function renderListView(args) {
         ${arg.description ? `<div class="arg-description">${escapeHtml(arg.description)}</div>` : ''}
         <div class="arg-texts">
           <div class="arg-text-he he-text">${escapeHtml(arg.text_he)}</div>
-          <div>${escapeHtml(arg.text_en)}</div>
+          <div>${arg.text_en || ''}</div>
         </div>
       </div>
     `;
@@ -595,7 +680,7 @@ function renderArgItem(arg) {
       ${arg.description ? `<div class="arg-description">${escapeHtml(arg.description)}</div>` : ''}
       <div class="arg-texts">
         <div class="arg-text-he he-text">${escapeHtml(arg.text_he)}</div>
-        <div>${escapeHtml(arg.text_en)}</div>
+        <div>${arg.text_en || ''}</div>
       </div>
     </div>
   `;
@@ -623,7 +708,7 @@ function openRecordModal(mishnaEl) {
 
   document.getElementById('modal-ref').textContent = ref.replace(/_/g, ' ').replace(/\./g, ' ');
   document.getElementById('modal-text-he').textContent = heText;
-  document.getElementById('modal-text-en').textContent = enText;
+  document.getElementById('modal-text-en').innerHTML = enText || '';
   document.getElementById('modal-description').value = '';
   document.getElementById('modal-label').value = '';
 
@@ -694,7 +779,7 @@ function openEditModal(argId) {
 
   document.getElementById('edit-modal-ref').textContent = arg.ref.replace(/_/g, ' ').replace(/\./g, ' ');
   document.getElementById('edit-modal-text-he').textContent = arg.text_he;
-  document.getElementById('edit-modal-text-en').textContent = arg.text_en;
+  document.getElementById('edit-modal-text-en').innerHTML = arg.text_en || '';
   document.getElementById('edit-modal-description').value = arg.description || '';
   document.getElementById('edit-modal-label').value = arg.label || '';
 
@@ -813,12 +898,12 @@ async function onLoadMasechet() {
   if (!sefariaRef) return;
 
   const enName = selectedOpt.dataset.en;
-  const heName = selectedOpt.dataset.he;
 
   // Find masechet entry
   const masechet = MASEKHTOT[seder].find(m => m.sefaria === sefariaRef);
   state.currentMasechet = masechet;
   state.activeFilters.clear();
+  state.currentChapter = 1;
 
   // Show spinner
   document.getElementById('explorer-placeholder').style.display = 'none';
@@ -826,8 +911,9 @@ async function onLoadMasechet() {
   document.getElementById('masechet-content').style.display = 'none';
 
   try {
-    const data = await fetchMasechet(sefariaRef);
+    const data = await fetchMasechet(sefariaRef, 1);
     state.loadedText = { he: data.he, en: data.en };
+    state.totalChapters = data.totalChapters;
 
     // Load recorded args for this masechet
     state.recordedArgs = await apiGet(`/api/arguments?masechet=${encodeURIComponent(enName)}`);
@@ -835,12 +921,40 @@ async function onLoadMasechet() {
     document.getElementById('loading-spinner').style.display = 'none';
     document.getElementById('masechet-content').style.display = '';
 
+    // Build chapter select options now that we know totalChapters
+    buildChapterSelect();
     renderTannaFilterList();
     renderExplorer();
   } catch (e) {
     document.getElementById('loading-spinner').style.display = 'none';
     document.getElementById('explorer-placeholder').style.display = '';
     showToast('Failed to load masechet: ' + e.message, true);
+    console.error(e);
+  }
+}
+
+async function loadChapter(chapterNum) {
+  if (!state.currentMasechet) return;
+  if (chapterNum < 1 || chapterNum > state.totalChapters) return;
+
+  // Scroll back to top of content area
+  document.querySelector('.content-area').scrollTop = 0;
+
+  document.getElementById('loading-spinner').style.display = 'flex';
+  document.getElementById('masechet-content').style.display = 'none';
+
+  try {
+    const data = await fetchMasechet(state.currentMasechet.sefaria, chapterNum);
+    state.loadedText = { he: data.he, en: data.en };
+    state.currentChapter = chapterNum;
+
+    document.getElementById('loading-spinner').style.display = 'none';
+    document.getElementById('masechet-content').style.display = '';
+    renderExplorer();
+  } catch (e) {
+    document.getElementById('loading-spinner').style.display = 'none';
+    document.getElementById('masechet-content').style.display = '';
+    showToast('Failed to load chapter: ' + e.message, true);
     console.error(e);
   }
 }
@@ -911,6 +1025,18 @@ async function init() {
   document.getElementById('seder-select').addEventListener('change', onSederChange);
   document.getElementById('masechet-select').addEventListener('change', onMasechetChange);
   document.getElementById('btn-load').addEventListener('click', onLoadMasechet);
+
+  // Chapter navigation
+  document.getElementById('btn-prev-chapter').addEventListener('click', () => {
+    loadChapter(state.currentChapter - 1);
+  });
+  document.getElementById('btn-next-chapter').addEventListener('click', () => {
+    loadChapter(state.currentChapter + 1);
+  });
+  document.getElementById('chapter-select').addEventListener('change', e => {
+    const ch = Number(e.target.value);
+    if (ch && ch !== state.currentChapter) loadChapter(ch);
+  });
 
   // Highlight toggle
   document.getElementById('toggle-highlight').addEventListener('change', e => {
