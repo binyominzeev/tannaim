@@ -337,6 +337,174 @@
       "notes": ""
     }
   ],
-  "arguments": [],
-  "nextArgumentId": 1
+  "arguments": [
+    {
+      "id": 1,
+      "masechet_en": "Arakhin",
+      "masechet_he": "ערכין",
+      "chapter": 1,
+      "mishna": 2,
+      "tannaim_ids": [
+        "r-meir",
+        "r-yehuda"
+      ],
+      "ref": "Mishnah_Arakhin.1.2",
+      "description": "Erech nochri",
+      "label": "",
+      "text_he": "הַנָּכְרִי, רַבִּי מֵאִיר אוֹמֵר נֶעֱרָךְ אֲבָל לֹא מַעֲרִיךְ. רַבִּי יְהוּדָה אוֹמֵר, מַעֲרִיךְ אֲבָל לֹא נֶעֱרָךְ. זֶה וָזֶה מוֹדִים, שֶׁנּוֹדְרִין וְנִדָּרִין: \n",
+      "text_en": "With regard to <b>a gentile, Rabbi Meir says:</b> He <b>is valuated</b> in a case where a Jew says: It is incumbent upon me to donate the fixed value of this gentile. <b>But</b> a gentile <b>does not take</b> a vow of <b>valuation</b> to donate his fixed value or the value of others. <b>Rabbi Yehuda says: He takes</b> a vow of <b>valuation, but is not valuated. And</b> both <b>this</b> <i>tanna</i>, Rabbi Meir, <b>and that</b> <i>tanna</i>, Rabbi Yehuda, <b>agree that</b> gentiles <b>vow</b> to donate the assessment of another <b>and are</b> the object of <b>vows,</b> whereby one donates the assessment of a gentile.",
+      "created_at": "2026-03-29T04:35:11.397Z",
+      "updated_at": "2026-03-29T04:35:11.397Z"
+    },
+    {
+      "id": 2,
+      "masechet_en": "Arakhin",
+      "masechet_he": "ערכין",
+      "chapter": 2,
+      "mishna": 4,
+      "tannaim_ids": [
+        "r-meir",
+        "r-yose"
+      ],
+      "ref": "Mishnah_Arakhin.2.4",
+      "description": "Musicians in the Mikdash",
+      "label": "",
+      "text_he": "וְעַבְדֵי הַכֹּהֲנִים הָיוּ, דִּבְרֵי רַבִּי מֵאִיר. רַבִּי יוֹסֵי אוֹמֵר, מִשְׁפְּחוֹת בֵּית הַפְּגָרִים וּבֵית צְפָרְיָא וּמֵאֶמָּאוֹם הָיוּ מַשִּׂיאִין לַכְּהֻנָּה. רַבִּי חֲנַנְיָא בֶּן אַנְטִיגְנוֹס אוֹמֵר, לְוִיִּם הָיוּ: \n",
+      "text_en": "The Temple musicians <b>were slaves of priests;</b> this is <b>the statement of Rabbi Meir. Rabbi Yosei says:</b> The musicians were not slaves, but Israelites from <b>the family of the house of Pegarim and the family of the house of Tzippara from</b> the city of <b>Emaum,</b> and their lineage was sufficiently pure that <b>they would marry</b> their daughters <b>to</b> members of <b>the priesthood. Rabbi Ḥanina ben Antigonus says: They were Levites.</b>",
+      "created_at": "2026-03-29T04:35:47.111Z",
+      "updated_at": "2026-03-29T04:35:47.111Z"
+    },
+    {
+      "id": 3,
+      "masechet_en": "Arakhin",
+      "masechet_he": "ערכין",
+      "chapter": 5,
+      "mishna": 1,
+      "tannaim_ids": [
+        "r-yehuda",
+        "r-yose"
+      ],
+      "ref": "Mishnah_Arakhin.5.1",
+      "description": "Mishkal yadi alay",
+      "label": "",
+      "text_he": "הָאוֹמֵר, מִשְׁקָלִי עָלָי, נוֹתֵן מִשְׁקָלוֹ. אִם כֶּסֶף, כֶּסֶף. אִם זָהָב, זָהָב. מַעֲשֶׂה בְּאִמָּהּ שֶׁל יִרְמַטְיָה שֶׁאָמְרָה, מִשְׁקַל בִּתִּי עָלָי, וְעָלְתָה לִירוּשָׁלַיִם, וּשְׁקָלוּהָ וְנָתְנָה מִשְׁקָלָהּ זָהָב. מִשְׁקַל יָדִי עָלָי, רַבִּי יְהוּדָה אוֹמֵר, מְמַלֵּא חָבִית מַיִם וּמַכְנִיסָהּ עַד מַרְפֵּקוֹ, וְשׁוֹקֵל בְּשַׂר חֲמוֹר וְגִידִין וַעֲצָמוֹת וְנוֹתֵן לְתוֹכָהּ עַד שֶׁתִּתְמַלֵּא. אָמַר רַבִּי יוֹסֵי, וְכִי הֵיאַךְ אֶפְשָׁר לְכַוֵּן בָּשָׂר כְּנֶגֶד בָּשָׂר וַעֲצָמוֹת כְּנֶגֶד עֲצָמוֹת. אֶלָּא שָׁמִין אֶת הַיָּד כַּמָּה הִיא רְאוּי��ה לִשְׁקֹל: \n",
+      "text_en": "<b>One who says:</b> It is incumbent <b>upon me</b> to donate <b>my weight, gives his weight</b> to the Temple treasury; <b>if</b> he specified <b>silver</b> he donates <b>silver, and if</b> he specified <b>gold</b> he donates <b>gold.</b> There was <b>an incident involving the mother of Yirmatya, who said:</b> It is incumbent <b>upon me</b> to donate the <b>weight of my daughter, and she ascended to Jerusalem and paid her</b> daughter’s <b>weight</b> in <b>gold</b> to the Temple treasury. In the case of one who says: It is incumbent <b>upon me</b> to donate the <b>weight of my forearm,</b> how does he ascertain the weight of his forearm? <b>Rabbi Yehuda says: He fills a barrel</b> with <b>water and inserts</b> his arm <b>up to his elbow</b> into the water. <b>And</b> in order to measure the displacement, <b>he weighs donkey flesh, and bones, and sinews and places</b> it <b>into</b> the barrel <b>until it fills,</b> and the water level reaches the top of the barrel. He then donates the weight of the meat and the bones to the Temple treasury. <b>Rabbi Yosei said:</b> Displacement is according to volume not according to weight, <b>and how then is it possible to match</b> the amount of the donkey <b>flesh with the flesh</b> of a person <b>and</b> the volume of the donkey’s <b>bones with</b> his <b>bones? Rather,</b> the court <b>appraises how much the forearm is likely to weigh.</b>",
+      "created_at": "2026-03-29T04:37:44.066Z",
+      "updated_at": "2026-03-29T04:37:44.066Z"
+    },
+    {
+      "id": 4,
+      "masechet_en": "Arakhin",
+      "masechet_he": "ערכין",
+      "chapter": 5,
+      "mishna": 1,
+      "tannaim_ids": [
+        "r-yehuda",
+        "r-yose"
+      ],
+      "ref": "Mishnah_Arakhin.5.1",
+      "description": "Mishkali alay",
+      "label": "",
+      "text_he": "הָאוֹמֵר, מִשְׁקָלִי עָלָי, נוֹתֵן מִשְׁקָלוֹ. אִם כֶּסֶף, כֶּסֶף. אִם זָהָב, זָהָב. מַעֲשֶׂה בְּאִמָּהּ שֶׁל יִרְמַטְיָה שֶׁאָמְרָה, מִשְׁקַל בִּתִּי עָלָי, וְעָלְתָה לִירוּשָׁלַיִם, וּשְׁקָלוּהָ וְנָתְנָה מִשְׁקָלָהּ זָהָב. מִשְׁקַל יָדִי עָלָי, רַבִּי יְהוּדָה אוֹמֵר, מְמַלֵּא חָבִית מַיִם וּמַכְנִיסָהּ עַד מַרְפֵּקוֹ, וְשׁוֹקֵל בְּשַׂר חֲמוֹר וְגִידִין וַעֲצָמוֹת וְנוֹתֵן לְתוֹכָהּ עַד שֶׁתִּתְמַלֵּא. אָמַר רַבִּי יוֹסֵי, וְכִי הֵיאַךְ אֶפְשָׁר לְכַוֵּן בָּשָׂר כְּנֶגֶד בָּשָׂר וַעֲצָמוֹת כְּנֶגֶד עֲצָמוֹת. אֶלָּא שָׁמִין אֶת הַיָּד כַּמָּה הִיא רְאוּי��ה לִשְׁקֹל: \n",
+      "text_en": "<b>One who says:</b> It is incumbent <b>upon me</b> to donate <b>my weight, gives his weight</b> to the Temple treasury; <b>if</b> he specified <b>silver</b> he donates <b>silver, and if</b> he specified <b>gold</b> he donates <b>gold.</b> There was <b>an incident involving the mother of Yirmatya, who said:</b> It is incumbent <b>upon me</b> to donate the <b>weight of my daughter, and she ascended to Jerusalem and paid her</b> daughter’s <b>weight</b> in <b>gold</b> to the Temple treasury. In the case of one who says: It is incumbent <b>upon me</b> to donate the <b>weight of my forearm,</b> how does he ascertain the weight of his forearm? <b>Rabbi Yehuda says: He fills a barrel</b> with <b>water and inserts</b> his arm <b>up to his elbow</b> into the water. <b>And</b> in order to measure the displacement, <b>he weighs donkey flesh, and bones, and sinews and places</b> it <b>into</b> the barrel <b>until it fills,</b> and the water level reaches the top of the barrel. He then donates the weight of the meat and the bones to the Temple treasury. <b>Rabbi Yosei said:</b> Displacement is according to volume not according to weight, <b>and how then is it possible to match</b> the amount of the donkey <b>flesh with the flesh</b> of a person <b>and</b> the volume of the donkey’s <b>bones with</b> his <b>bones? Rather,</b> the court <b>appraises how much the forearm is likely to weigh.</b>",
+      "created_at": "2026-03-29T04:38:58.655Z",
+      "updated_at": "2026-03-29T04:38:58.655Z"
+    },
+    {
+      "id": 5,
+      "masechet_en": "Arakhin",
+      "masechet_he": "ערכין",
+      "chapter": 6,
+      "mishna": 1,
+      "tannaim_ids": [
+        "r-eliezer",
+        "r-yehoshua",
+        "r-shimon-ben-gamliel"
+      ],
+      "ref": "Mishnah_Arakhin.6.1",
+      "description": "Hekdesh with shibbud ketubah",
+      "label": "",
+      "text_he": "שׁוּם הַיְתוֹמִים, שְׁלשִׁים יוֹם, וְשׁוּם הַהֶקְדֵּשׁ, שִׁשִּׁים יוֹם, וּמַכְרִיזִין בַּבֹּקֶר וּבָעָרֶב. הַמַּקְדִּישׁ נְכָסָיו וְהָיְתָה עָלָיו כְּתֻבַּת אִשָּׁה, רַבִּי אֱלִיעֶזֶר אוֹמֵר, כְּשֶׁיְּגָרְשֶׁנָּה, יַדִּיר הֲנָאָה. רַבִּי יְהוֹשֻׁעַ אוֹמֵ��, אֵינוֹ צָרִיךְ. כַּיוֹצֵא בוֹ אָמַר רַבָּן שִׁמְעוֹן בֶּן גַּמְלִיאֵל, אַף הֶעָרֵב לָאִשָּׁה בִכְתֻבָּתָה וְהָיָה בַעְלָהּ מְגָרְשָׁהּ, יַדִּיר הֲנָאָה, שֶׁמָּא יַעֲשֶׂה קְנוּנְיָא עַל נְכָסָיו שֶׁל זֶה וְיַחֲזִיר אֶת אִשְׁתּוֹ: \n",
+      "text_en": "One proclaims, i.e., publicly announces, <b>the appraisal of the</b> property inherited by minor <b>orphans,</b> which is being sold to repay their father’s debt, for <b>thirty days,</b> in order to receive the maximal price. <b>And</b> one proclaims <b>the appraisal of consecrated</b> property that is being sold by the Temple treasury for <b>sixty days, and one proclaims</b> it <b>in the morning and in the evening.</b> In the case of <b>one who consecrates his property and there was</b> the outstanding debt <b>of the marriage contract of</b> his <b>wife,</b> for whose repayment one’s property is liened, <b>Rabbi Eliezer says: When he divorces her, he shall vow</b> that <b>benefit</b> from her is forbidden to him. This is to prevent collusion, by which he divorces her, she collects payment from the consecrated property, and he then remarries her. <b>Rabbi Yehoshua says: He need not</b> do so. <b>On a similar note, Rabban Shimon ben Gamliel said: Even</b> in the case of <b>the guarantor of a woman for her marriage contract, and her husband was divorcing her</b> and could not pay the debt, the husband <b>shall vow</b> that <b>benefit</b> from her is forbidden to him, <b>lest he</b> and his wife <b>engage in collusion [<i>kinunya</i>]</b> and collect payment from the property of <b>that</b> guarantor, <b>and</b> then the husband <b>will remarry his wife.</b>",
+      "created_at": "2026-03-29T04:39:42.615Z",
+      "updated_at": "2026-03-29T04:39:42.615Z"
+    },
+    {
+      "id": 6,
+      "masechet_en": "Arakhin",
+      "masechet_he": "ערכין",
+      "chapter": 7,
+      "mishna": 4,
+      "tannaim_ids": [
+        "r-eliezer",
+        "r-yehuda",
+        "r-shimon"
+      ],
+      "ref": "Mishnah_Arakhin.7.4",
+      "description": "Kohanim take over ancestral field",
+      "label": "",
+      "text_he": "הִגִּיעַ הַיּוֹבֵל וְלֹא נִגְאֲלָה, הַכֹּהֲנִים נִכְנָסִים לְתוֹכָהּ וְנוֹתְנִים אֶת דָּמֶיהָ, דִּבְרֵי רַבִּי יְהוּדָה. רַבִּי שִׁמְעוֹן אוֹמֵר, נִכְנָסִין, אֲבָל לֹא נוֹתְנִין. רַבִּי אֱלִיעֶזֶר אוֹמֵר, לֹא נִכְנָסִין וְלֹא נוֹתְנִין, אֶלָּא נִקְרֵאת שְׂדֵה רְטוּשִׁים, עַד הַיּוֹבֵל הַשֵּׁנִי. הִגִּיעַ הַיּוֹבֵל הַשֵּׁנִי וְלֹא נִגְאֲלָה, נִקְרֵאת רְטוּשֵׁי רְטוּשִׁין עַד הַיּוֹבֵל הַשְּׁלִישִׁי. לְעוֹלָם אֵין הַכֹּהֲנִים נִכְנָסִין לְתוֹכָהּ, עַד שֶׁיִּגְאָלֶנָּה אַחֵר: \n",
+      "text_en": "If one consecrated his ancestral field and the <b>Jubilee</b> Year <b>arrived and it was not redeemed</b> by the owner or anyone else, <b>the priests enter into</b> the field <b>and give its</b> redemption <b>payment</b> to the Temple treasury; this is <b>the statement of Rabbi Yehuda. Rabbi Shimon says: They enter</b> into the field, <b>but they do not give</b> its redemption payment to the Temple treasury. <b>Rabbi Eliezer says:</b> The priests <b>do not enter</b> into the field, <b>and</b> they also <b>do not give</b> its redemption payment to the Temple treasury. <b>Rather,</b> the field remains in the possession of the Temple treasury, and <b>it is called: An abandoned field, until the second Jubilee</b> Year. If <b>the second Jubilee arrived and it was</b> still <b>not redeemed, it is called: An abandoned</b> field from among the <b>abandoned</b> fields, meaning one that was abandoned twice, <b>until the third Jubilee.</b> In any case, <b>the priests never enter into</b> a consecrated field during the Jubilee Year <b>until another</b> person <b>redeems it</b> first. ",
+      "created_at": "2026-03-29T04:40:49.098Z",
+      "updated_at": "2026-03-29T04:40:49.098Z"
+    },
+    {
+      "id": 7,
+      "masechet_en": "Arakhin",
+      "masechet_he": "ערכין",
+      "chapter": 8,
+      "mishna": 4,
+      "tannaim_ids": [
+        "r-eliezer",
+        "r-elazar-azaryah",
+        "r-elazar"
+      ],
+      "ref": "Mishnah_Arakhin.8.4",
+      "description": "Is it possible to makdish all one's assets",
+      "label": "",
+      "text_he": "מַחֲרִים אָדָם מִצֹּאנוֹ וּמִבְּקָרוֹ, מֵעֲבָדָיו וּמִשִּׁפְחוֹתָיו הַכְּנַעֲנִים, וּמִשְּׂדֵה אֲחֻזָּתוֹ. וְאִם הֶחֱרִים אֶת כֻּלָּן, אֵינָן מֻחְרָמִין, דִּבְרֵי רַבִּי אֶלְעָזָר. אָמַר רַבִּי אֶלְעָזָר בֶּן עֲזַרְיָה, מָה אִם לַגָּבֹהַּ, אֵין אָדָם רַשַּׁאי לְהַחֲרִים אֶת כָּל נְכָסָיו, עַל אַחַת כַּמָּה וְכַמָּה שֶׁיְּהֵא אָדָם חַיָּב לִהְיוֹת חָס עַל נְכָסָיו: \n",
+      "text_en": "<b>A person</b> may <b>dedicate,</b> for sacred or priestly use, some <b>of his flock and</b> some <b>of his cattle, and</b> some <b>of his Canaanite slaves and maidservants, and some of his ancestral field. But if he dedicated all</b> that he has <b>of</b> any type of property, <b>they are not dedicated,</b> i.e., the dedication does not take effect; this is <b>the statement of Rabbi Eliezer. Rabbi Elazar ben Azarya said: If for the Most High a person may not dedicate all his property,</b> it is <b>all the more so</b> the case <b>that a person should spare his property</b> and not give all of it to others.",
+      "created_at": "2026-03-29T04:50:18.237Z",
+      "updated_at": "2026-03-29T04:50:18.237Z"
+    },
+    {
+      "id": 8,
+      "masechet_en": "Arakhin",
+      "masechet_he": "ערכין",
+      "chapter": 8,
+      "mishna": 5,
+      "tannaim_ids": [
+        "r-yehuda",
+        "r-shimon",
+        "r-yehuda-hanasi"
+      ],
+      "ref": "Mishnah_Arakhin.8.5",
+      "description": "Kohanim machrimim",
+      "label": "",
+      "text_he": "הַמַּחֲרִים בְּנוֹ וּבִתּוֹ, עַבְדּוֹ וְשִׁפְחָתוֹ הָעִבְרִים, וּשְׂדֵה מִקְנָתוֹ, אֵינָן מֻחְרָמִים, שֶׁאֵין אָדָם מַחֲרִים דָּבָר שֶׁאֵינוֹ שֶׁלּוֹ. כֹּהֲנִים וּלְוִיִּם אֵינָן מַחֲרִימִין, דִּבְרֵי רַבִּי יְהוּדָה. רַבִּי שִׁמְעוֹן אוֹמֵר, הַכֹּהֲנִים אֵינָן מַחֲרִימִין, שֶׁהַחֲרָמִים שֶׁלָּהֶם. הַלְוִיִּם מַחֲרִימִים, שֶׁאֵין הַחֲרָמִים שֶׁלָּהֶן. רַבִּי אוֹמֵר, נִרְאִים דִּבְרֵי רַבִּי יְהוּדָה בַּקַּרְקָעוֹת, שֶׁנֶּאֱמַר (ויקרא כה), כִּי אֲחֻזַּת עוֹלָם הוּא לָהֶם, וְדִבְרֵי רַבִּי שִׁמְעוֹן בְּמִטַּלְטְלִים, שֶׁאֵין הַחֲרָמִים שֶׁלָּהֶם: \n",
+      "text_en": "In the case of <b>one who dedicates his son or his daughter, or his Hebrew slave or maidservant, or his purchased field,</b> those items <b>are not</b> considered <b>dedicated, as a person</b> may <b>not dedicate an item that is not his. Priests and Levites may not dedicate</b> their property; this is <b>the statement of Rabbi Yehuda. Rabbi Shimon says: Priests may not dedicate</b> their property, <b>as</b> all <b>dedicated</b> property <b>is theirs;</b> it is one of the priestly gifts, as the verse states: “Everything dedicated in Israel shall be yours” (Numbers 18:14). <b>But Levites may dedicate</b> their property, <b>as dedicated</b> property <b>is not theirs.</b> <b>Rabbi</b> Yehuda HaNasi <b>said: The statement of Rabbi Yehuda appears</b> to be correct <b>with regard to land, as it is stated</b> about the land of the Levites: “But the fields of the open land surrounding their cities may not be sold, <b>as that is their perpetual possession”</b> (Leviticus 25:34), and they cannot renounce that land. <b>And the statement of Rabbi Shimon appears</b> to be correct <b>with regard to movable property,</b> which the Levites may dedicate, <b>as dedicated</b> property <b>is not theirs.</b> It is a gift for the priests, not the Levites.",
+      "created_at": "2026-03-30T10:46:28.016Z",
+      "updated_at": "2026-03-30T10:46:28.016Z"
+    },
+    {
+      "id": 9,
+      "masechet_en": "Arakhin",
+      "masechet_he": "ערכין",
+      "chapter": 9,
+      "mishna": 5,
+      "tannaim_ids": [
+        "r-meir",
+        "r-yehuda",
+        "r-shimon"
+      ],
+      "ref": "Mishnah_Arakhin.9.5",
+      "description": "Batei arei chomah",
+      "label": "",
+      "text_he": "כֹּל שֶׁהוּא לִפְנִים מִן הַחוֹמָה, הֲרֵי הוּא כְבָתֵּי עָרֵי חוֹמָה, חוּץ מִן הַשָּׂדוֹת. רַבִּי מֵאִיר אוֹמֵר, אַף הַשָּׂדוֹת. בַּיִת הַבָּנוּי בַּחוֹמָה, רַבִּי יְהוּדָה אוֹמֵר, אֵינוֹ כְבָתֵּי עָרֵי חוֹמָה. רַבִּי שִׁמְעוֹן אוֹמֵר, כֹּתֶל הַחִיצוֹן הִיא חוֹמָתוֹ: \n",
+      "text_en": "The halakhic status of <b>any</b> area <b>that is</b> located <b>within the</b> city <b>wall is like</b> that <b>of the houses of walled cities</b> in terms of its redemption, <b>except for the fields</b> located therein. <b>Rabbi Meir says: Even the fields</b> are included in this category. With regard to <b>a house that is built in the wall</b> itself, <b>Rabbi Yehuda says:</b> Its halakhic status <b>is not like</b> that <b>of the houses of walled cities. Rabbi Shimon says: The outer wall</b> of the house <b>is</b> considered the city <b>wall,</b> and therefore it has the status of a house in a walled city.",
+      "created_at": "2026-03-30T10:47:41.473Z",
+      "updated_at": "2026-03-30T10:47:41.473Z"
+    }
+  ],
+  "nextArgumentId": 10
 }
